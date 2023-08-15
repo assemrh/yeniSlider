@@ -34,23 +34,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
     rotatingDivs.forEach((div, index) => {
         div.addEventListener("click", () => {
-            //currentDegree = parseInt(div.dataset.degree, 10) ;
-            if (index<currentSlideIndex){
-                currentDegree = currentDegree + 90 * (index - currentSlideIndex) ;
-            }else {
-                currentDegree = currentDegree - 90 * (currentSlideIndex - index ) ;
+            switch (currentSlideIndex - index) {
+                case 1:
+                case 2:
+                    currentDegree = currentDegree - 90 * ( currentSlideIndex - index);
+                    break;
+                case -1:
+                case -2:
+                    currentDegree = currentDegree + 90 * ( index - currentSlideIndex );
+                    break;
+                case 3:
+                    currentDegree = currentDegree + 90 ;
+                    break;
+                case -3:
+                    currentDegree = currentDegree - 90 ;
+                    break;
+                default :
+                    //currentDegree = currentDegree;
+                    break;
             }
             goToSlide(index);
             setSlider(index);
             currentSlideIndex = index;
+            /*            if (index - currentSlideIndex){
+                                currentDegree = currentDegree + 90 * (index - currentSlideIndex) ;
+                        }else {
+                            currentDegree = currentDegree - 90 * (currentSlideIndex - index ) ;
+                        }*/
+
         });
     });
     paginationBoxes.forEach((box, index) => {
         box.addEventListener("click", function () {
-            if (index<currentSlideIndex){
-                currentDegree = currentDegree + 90 * (index - currentSlideIndex) ;
-            }else {
-                currentDegree = currentDegree - 90 * (currentSlideIndex - index ) ;
+            pauseAuto();
+
+            if (index < currentSlideIndex) {
+                currentDegree = currentDegree + 90 * (index - currentSlideIndex);
+            } else {
+                currentDegree = currentDegree - 90 * (currentSlideIndex - index);
             }
             //currentDegree =parseInt(rotatingDivs[index].dataset.degree, 10) ;
             setSlider(index);
@@ -60,16 +81,20 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     nextButton.addEventListener("click", function () {
+        pauseAuto();
+
         const nextImg = (currentSlideIndex + 1) % sliderItems.length;
-        currentDegree = currentDegree + 90 ;
+        currentDegree = currentDegree + 90;
         goToSlide(nextImg);
         //rotate(container, currentDegree + 90);
         setSlider(nextImg);
     });
 
     prevButton.addEventListener("click", function () {
-        const prevImg = (currentSlideIndex - 1 + sliderItems.length) % sliderItems.length;
-        currentDegree = currentDegree - 90 ;
+        pauseAuto();
+
+        const prevImg = (currentSlideIndex - 1) % sliderItems.length;
+        currentDegree = currentDegree - 90;
         goToSlide(prevImg);
         //rotate(container, currentDegree - 90);
         setSlider(prevImg);
@@ -93,7 +118,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function setSlider(index) {
-        pauseAuto();
         setActive(index);
         //returnImageBack();
         updateCarTitle(index);
@@ -152,9 +176,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // Loader'ı ayarlanan derecede döndürmek
 
         rotate(container, currentDegree);
-/*        setTimeout(() => {
-            currentDegree = fixRotate(container, currentDegree);
-        }, 1100);*/
+        /*        setTimeout(() => {
+                    currentDegree = fixRotate(container, currentDegree);
+                }, 1100);*/
 
         // Content divi sağdan sola kayarak görünsün
         contentDiv.classList.remove("fade-in");
@@ -164,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function fixRotate(element, degree, flag = true) {
-        if (degree  > 360) {
+        if (degree > 360) {
             degree = degree % 360;
             alert(degree)
             container.style.transition = "0ms";
@@ -189,20 +213,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function autoRotate() {
-        currentSlideIndex = (currentSlideIndex) % rotatingDivs.length;
-        goToSlide(currentSlideIndex);
-        updateContentBackgroundColor(currentSlideIndex);
-        updateBackgroundColor(currentSlideIndex);
-        updateCarTitle(currentSlideIndex);
+        currentSlideIndex = (currentSlideIndex + 1) % rotatingDivs.length;
         currentDegree = currentDegree + 90;
-        currentSlideIndex++;
+        setSlider(currentSlideIndex);
+        goToSlide(currentSlideIndex);
     }
 
     function returnImageBack(transition = "0.6s") {
         images.forEach(img => {
-                let thumbDegree = 360 - currentDegree
-                img.style.transition = transition;
-                img.style.transform = `rotate( -${currentDegree}deg)`;
+            img.style.transition = transition;
+            if (currentDegree>0)
+            img.style.transform = `rotate( -${currentDegree}deg)`;
+            else {
+                img.style.transform = `rotate( ${currentDegree * (-1)}deg)`;
+            }
         });
     }
 
@@ -215,11 +239,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // İlk sayfa yüklenirken ilk kutuyu ve loader'ı aktif hale getir
-    setActive(currentSlideIndex);
-    setSlider(currentSlideIndex);
     // İlk sayfa yüklenirken ilk kutuyu ve slaytı aktif hale getir
     //rotatingDivs[0].click();
     startAutoRotate();
+
 });
 
 
