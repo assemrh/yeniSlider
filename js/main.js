@@ -34,25 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     rotatingDivs.forEach((div, index) => {
         div.addEventListener("click", () => {
-            switch (currentSlideIndex - index) {
-                case 1:
-                case 2:
-                    currentDegree = currentDegree - 90 * ( currentSlideIndex - index);
-                    break;
-                case -1:
-                case -2:
-                    currentDegree = currentDegree + 90 * ( index - currentSlideIndex );
-                    break;
-                case 3:
-                    currentDegree = currentDegree + 90 ;
-                    break;
-                case -3:
-                    currentDegree = currentDegree - 90 ;
-                    break;
-                default :
-                    //currentDegree = currentDegree;
-                    break;
-            }
+            currentDegree = calcCorrectDegree(currentSlideIndex, index, currentDegree);
             goToSlide(index);
             setSlider(index);
             currentSlideIndex = index;
@@ -68,11 +50,8 @@ document.addEventListener("DOMContentLoaded", function () {
         box.addEventListener("click", function () {
             pauseAuto();
 
-            if (index < currentSlideIndex) {
-                currentDegree = currentDegree + 90 * (index - currentSlideIndex);
-            } else {
-                currentDegree = currentDegree - 90 * (currentSlideIndex - index);
-            }
+            currentDegree = calcCorrectDegree(currentSlideIndex, index, currentDegree);
+
             //currentDegree =parseInt(rotatingDivs[index].dataset.degree, 10) ;
             setSlider(index);
             goToSlide(index);
@@ -246,6 +225,29 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+
+function calcCorrectDegree(currentSlideIndex, index, currentDegree) {
+    switch (currentSlideIndex - index) {
+        case 1:
+        case 2:
+            currentDegree = currentDegree - 90 * (currentSlideIndex - index);
+            break;
+        case -1:
+        case -2:
+            currentDegree = currentDegree + 90 * (index - currentSlideIndex);
+            break;
+        case 3:
+            currentDegree = currentDegree + 90;
+            break;
+        case -3:
+            currentDegree = currentDegree - 90;
+            break;
+        default:
+            //currentDegree = currentDegree;
+            break;
+    }
+    return currentDegree;
+}
 /*
 
 index 0 =>  90 * 0 + 45 = 45°
